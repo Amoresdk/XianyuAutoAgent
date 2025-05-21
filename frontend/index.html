@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闲鱼AutoAgent - 测试页面</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 40px;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+        .card-body {
+            padding: 30px;
+        }
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .card-text {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #6C5CE7;
+            border-color: #6C5CE7;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background-color: #5341D6;
+            border-color: #5341D6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.25);
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>闲鱼AutoAgent - API测试页面</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">模型设置页面</h5>
+                        <p class="card-text">测试模型配置相关API，包括获取设置、保存设置、更新单个设置项和重置设置</p>
+                        <a href="/pages/model_settings.html" class="btn btn-primary">访问模型设置页面</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">对话管理页面</h5>
+                        <p class="card-text">测试对话管理相关API，包括获取统计数据、对话列表、对话信息、消息列表和发送消息</p>
+                        <a href="/pages/conversation.html" class="btn btn-primary">访问对话管理页面</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">API文档</h5>
+                        <p class="card-text">查看API接口规范和说明文档</p>
+                        <a href="#" onclick="showApiDoc()" class="btn btn-primary">查看API文档</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="apiDocModal" tabindex="-1" aria-labelledby="apiDocModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="apiDocModalLabel">API文档</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="apiDocContent">
+                        加载中...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        function showApiDoc() {
+            const apiDocModal = new bootstrap.Modal(document.getElementById('apiDocModal'));
+            
+            // 获取API文档内容
+            fetch('/static/mocks/api_doc.md')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('无法加载API文档');
+                    }
+                    return response.text();
+                })
+                .then(markdown => {
+                    document.getElementById('apiDocContent').innerHTML = marked.parse(markdown);
+                    apiDocModal.show();
+                })
+                .catch(error => {
+                    document.getElementById('apiDocContent').innerHTML = `
+                        <div class="alert alert-danger">
+                            加载API文档失败: ${error.message}
+                        </div>
+                    `;
+                    apiDocModal.show();
+                });
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客服Agent设置 - 闲鱼AutoAgent</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C5CE7;
+            --primary-light: #A29BFE;
+            --primary-dark: #5341D6;
+            --accent-color: #FD79A8;
+            --text-color: #2D3436;
+            --text-light: #636E72;
+            --bg-color: #F7F9FC;
+            --card-bg: #FFFFFF;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --success-color: #00B894;
+            --warning-color: #FDCB6E;
+            --danger-color: #FF7675;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 24px;
+        }
+        
+        .page-header {
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-title i {
+            margin-right: 12px;
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+        
+        .breadcrumb {
+            display: none; /* 隐藏面包屑，使用首页的顶部导航代替 */
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 20px 24px;
+        }
+        
+        .card-header h5 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header h5 i {
+            color: var(--primary-color);
+            margin-right: 12px;
+            font-size: 20px;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .btn {
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.25);
+        }
+        
+        .btn-outline-secondary {
+            color: var(--text-light);
+            border-color: rgba(0,0,0,0.1);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: rgba(108, 92, 231, 0.08);
+            color: var(--primary-color);
+        }
+        
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 32px;
+        }
+        
+        .form-switch .form-check-input {
+            width: 3em;
+            height: 1.5em;
+        }
+        
+        .form-switch .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .agent-card {
+            transition: all 0.3s;
+        }
+        
+        .prompt-edit-btn {
+            border-radius: 50px;
+            padding: 0.375rem 1.2rem;
+        }
+        
+        .agent-icon {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-right: 15px;
+        }
+        
+        .agent-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            margin-left: 10px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-inactive {
+            background-color: rgba(255, 118, 117, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .modal-footer .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-headset"></i>客服Agent设置
+        </h1>
+        <p class="text-muted mt-2">配置和管理专家型Agent及其提示词</p>
+    </div>
+
+    <form id="agentSettingsForm">
+        <!-- 意图判断Agent卡片 -->
+        <div class="card agent-card" id="intentCard">
+            <div class="card-header">
+                <h5><i class="fas fa-brain"></i>意图判断Agent</h5>
+                <div class="form-check form-switch position-absolute end-0 me-4 top-50 translate-middle-y">
+                    <input class="form-check-input" type="checkbox" id="intentSwitch" checked onchange="toggleAgentStatus('intentCard', this.checked)">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="agent-icon">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">意图分类专家</h5>
+                        <p class="mb-0 text-muted">负责分析用户意图，将请求路由至合适的专家Agent</p>
+                        <span class="agent-status status-active" id="intentStatus">已启用</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-primary prompt-edit-btn" onclick="showPromptModal('意图判断', 'intentPrompt')">
+                        <i class="fas fa-edit me-1"></i> 编辑提示词
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 售前售后Agent卡片 -->
+        <div class="card agent-card" id="salesCard">
+            <div class="card-header">
+                <h5><i class="fas fa-shopping-cart"></i>售前售后Agent</h5>
+                <div class="form-check form-switch position-absolute end-0 me-4 top-50 translate-middle-y">
+                    <input class="form-check-input" type="checkbox" id="salesSwitch" checked onchange="toggleAgentStatus('salesCard', this.checked)">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="agent-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">客服专家</h5>
+                        <p class="mb-0 text-muted">处理一般客服问题，产品咨询，售后服务等问题</p>
+                        <span class="agent-status status-active" id="salesStatus">已启用</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-primary prompt-edit-btn" onclick="showPromptModal('售前售后', 'salesPrompt')">
+                        <i class="fas fa-edit me-1"></i> 编辑提示词
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术专家Agent卡片 -->
+        <div class="card agent-card" id="techCard">
+            <div class="card-header">
+                <h5><i class="fas fa-tools"></i>技术专家Agent</h5>
+                <div class="form-check form-switch position-absolute end-0 me-4 top-50 translate-middle-y">
+                    <input class="form-check-input" type="checkbox" id="techSwitch" checked onchange="toggleAgentStatus('techCard', this.checked)">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="agent-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">技术专家</h5>
+                        <p class="mb-0 text-muted">解决技术性问题，提供专业技术支持和建议</p>
+                        <span class="agent-status status-active" id="techStatus">已启用</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-primary prompt-edit-btn" onclick="showPromptModal('技术专家', 'techPrompt')">
+                        <i class="fas fa-edit me-1"></i> 编辑提示词
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 金牌销售Agent卡片 -->
+        <div class="card agent-card" id="priceCard">
+            <div class="card-header">
+                <h5><i class="fas fa-dollar-sign"></i>金牌销售Agent</h5>
+                <div class="form-check form-switch position-absolute end-0 me-4 top-50 translate-middle-y">
+                    <input class="form-check-input" type="checkbox" id="priceSwitch" checked onchange="toggleAgentStatus('priceCard', this.checked)">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="agent-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">议价专家</h5>
+                        <p class="mb-0 text-muted">负责处理价格谈判，优惠策略和促销方案</p>
+                        <span class="agent-status status-active" id="priceStatus">已启用</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-primary prompt-edit-btn" onclick="showPromptModal('金牌销售', 'pricePrompt')">
+                        <i class="fas fa-edit me-1"></i> 编辑提示词
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部按钮 -->
+        <div class="footer-buttons">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> 保存配置
+            </button>
+        </div>
+    </form>
+
+    <!-- 提示词编辑模态框 -->
+    <div class="modal fade" id="promptModal" tabindex="-1" aria-labelledby="promptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="promptModalLabel">编辑提示词</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="promptTextarea" class="form-label">提示词内容</label>
+                        <textarea class="form-control" id="promptTextarea" rows="12"></textarea>
+                    </div>
+                    <div class="small text-muted">
+                        <p><i class="fas fa-info-circle me-1"></i>提示词用于指导AI模型生成特定风格和内容的回复。请根据需要调整提示词内容。</p>
+                        <p>支持使用以下变量：</p>
+                        <ul>
+                            <li><code>{user_name}</code> - 用户名称</li>
+                            <li><code>{product_name}</code> - 商品名称</li>
+                            <li><code>{conversation_history}</code> - 对话历史</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="savePrompt()">保存提示词</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 存储提示词内容
+        const prompts = {
+            intentPrompt: `您是闲鱼平台的智能客服系统中的意图分类专家。您的主要任务是分析用户消息的意图，并将请求路由到合适的专家Agent处理。
+根据用户的消息，将用户意图分为以下几类：
+1. 询价/讨价还价 - 由价格专家处理
+2. 技术问题/产品使用方法 - 由技术专家处理
+3. 一般咨询/售后/物流 - 由客服专家处理
+
+请根据{conversation_history}中的对话历史，分析用户的真实意图，并返回相应的分类结果。`,
+            salesPrompt: `您是闲鱼平台的专业客服代表。您需要帮助用户解决一般的咨询问题、售后问题和物流相关问题。
+回复要求：
+1. 语气友好、专业、有礼貌
+2. 回答要简洁明了，直击问题核心
+3. 适当使用表情符号增加亲和力
+4. 为用户提供有价值的信息和解决方案
+5. 必要时请用户提供更多细节以便更好地提供帮助
+
+参考以下对话历史为用户{user_name}提供帮助：
+{conversation_history}`,
+            techPrompt: `您是闲鱼平台的技术支持专家。您的任务是解答用户关于产品使用、技术问题和功能咨询的问题。
+回复要求：
+1. 语气专业、清晰，使用技术术语要适度
+2. 解释要详细但易于理解
+3. 提供具体的步骤和解决方案
+4. 如需引导用户操作，请给出明确的步骤指导
+5. 必要时可以使用搜索工具获取最新的技术信息
+
+请根据以下对话历史，为用户{user_name}解答关于{product_name}的技术问题：
+{conversation_history}`,
+            pricePrompt: `您是闲鱼平台的议价专家。您的任务是处理用户的砍价请求，在保证商家利益的同时，适度满足买家需求，达成交易。
+价格策略指导：
+1. 初始降价幅度不超过原价的10%
+2. 最大降价幅度不超过原价的20%
+3. 总共最多可降价3次，每次降价幅度递减
+4. 强调商品价值和品质，而非仅关注价格
+5. 适时提供促销信息或优惠方案
+
+请根据以下对话历史，为{product_name}提供合理的价格方案：
+{conversation_history}`
+        };
+
+        // 当前正在编辑的提示词类型
+        let currentPromptType = '';
+
+        // 显示提示词编辑模态框
+        function showPromptModal(agentName, promptType) {
+            document.getElementById('promptModalLabel').innerText = `编辑${agentName}提示词`;
+            document.getElementById('promptTextarea').value = prompts[promptType];
+            currentPromptType = promptType;
+            
+            const promptModal = new bootstrap.Modal(document.getElementById('promptModal'));
+            promptModal.show();
+        }
+
+        // 保存提示词
+        function savePrompt() {
+            const newPrompt = document.getElementById('promptTextarea').value;
+            prompts[currentPromptType] = newPrompt;
+            
+            // 关闭模态框
+            const promptModal = bootstrap.Modal.getInstance(document.getElementById('promptModal'));
+            promptModal.hide();
+            
+            // 显示成功消息
+            alert('提示词已保存');
+        }
+
+        // 切换Agent状态
+        function toggleAgentStatus(cardId, isActive) {
+            const statusElem = document.getElementById(cardId.replace('Card', 'Status'));
+            if (isActive) {
+                statusElem.innerText = '已启用';
+                statusElem.className = 'agent-status status-active';
+            } else {
+                statusElem.innerText = '已禁用';
+                statusElem.className = 'agent-status status-inactive';
+            }
+        }
+
+        // 表单提交处理
+        document.getElementById('agentSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 收集所有Agent的启用状态
+            const agentStatus = {
+                intent: document.getElementById('intentSwitch').checked,
+                sales: document.getElementById('salesSwitch').checked,
+                tech: document.getElementById('techSwitch').checked,
+                price: document.getElementById('priceSwitch').checked
+            };
+            
+            // 在这里可以添加将设置保存到服务器的代码
+            console.log('Agent状态:', agentStatus);
+            console.log('提示词配置:', prompts);
+            
+            alert('配置已保存');
+        });
+    </script>
+</body>
+</html> 

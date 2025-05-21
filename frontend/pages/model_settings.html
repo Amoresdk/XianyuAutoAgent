@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闲鱼AutoAgent - 参数配置</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/settings.css">
+</head>
+<body>
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-microchip"></i>参数配置
+        </h1>
+        <p class="text-muted mt-2">配置AI对话模型、密钥和接口信息</p>
+    </div>
+
+    <form id="modelSettingsForm">
+        <!-- 模型选择卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-brain"></i>选择AI模型</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="model-card selected" data-model="qwen" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="model-card-title">通义千问</div>
+                            </div>
+                            <p class="model-card-description">阿里云自研大语言模型，具有较强的中文理解能力和对话能力</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-card" data-model="gpt-4" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="model-card-title">GPT-4</div>
+                            </div>
+                            <p class="model-card-description">OpenAI的GPT-4是目前最先进的大语言模型之一，具有强大的推理和创作能力</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-card" data-model="gpt-3.5" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div class="model-card-title">GPT-3.5</div>
+                            </div>
+                            <p class="model-card-description">GPT-3.5提供良好的性能与速度平衡，适合一般对话和客服场景</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-card" data-model="wenxin" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-message"></i>
+                                </div>
+                                <div class="model-card-title">文心一言</div>
+                            </div>
+                            <p class="model-card-description">百度文心一言是国内领先的大语言模型，拥有丰富的中文知识和对话能力</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-card" data-model="custom" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="model-card-title">自定义模型</div>
+                            </div>
+                            <p class="model-card-description">配置自定义模型接口和参数，适用于私有部署或其他第三方模型</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API密钥配置 -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-key"></i>模型秘钥</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="apiKey" class="form-label">API密钥</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="apiKey" placeholder="输入API密钥" 
+                               onchange="saveSettings()" onblur="saveApiKey()">
+                        <button class="btn btn-outline-secondary" type="button" onclick="toggleApiKeyVisibility()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="form-text">请从AI服务提供商获取API密钥</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 模型接口配置 -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-plug"></i>模型接口配置</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="apiEndpoint" class="form-label">接口地址</label>
+                    <input type="text" class="form-control" id="apiEndpoint" 
+                           placeholder="https://api.example.com/v1" 
+                           value="https://dashscope.aliyuncs.com/api/v1"
+                           onchange="saveSettings()" onblur="saveEndpoint()">
+                </div>
+                <div class="mb-3" id="modelNameGroup">
+                    <label for="modelName" class="form-label">模型名称</label>
+                    <input type="text" class="form-control" id="modelName" 
+                           placeholder="模型名称" value="qwen-max"
+                           onchange="saveSettings()" onblur="saveModelName()">
+                </div>
+            </div>
+        </div>
+
+        <!-- 闲鱼Cookies配置 -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cookie-bite"></i>闲鱼平台Cookies</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="cookies" class="form-label">Cookies字符串</label>
+                    <textarea class="form-control" id="cookies" 
+                              placeholder="在此粘贴从浏览器获取的Cookies字符串..."
+                              onchange="saveSettings()" onblur="saveCookies()"></textarea>
+                    <div class="form-text">从闲鱼网页版获取Cookies</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部按钮 -->
+        <div class="footer-buttons">
+            <button type="button" class="btn btn-primary" onclick="saveAllSettings()">
+                <i class="fas fa-save me-1"></i> 保存所有设置
+            </button>
+            <button type="button" class="btn btn-outline-secondary ms-2" onclick="resetToDefaults()">
+                <i class="fas fa-undo me-1"></i> 恢复默认配置
+            </button>
+        </div>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/js/model_settings.js"></script>
+</body>
+</html> 

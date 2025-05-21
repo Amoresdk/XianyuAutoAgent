@@ -1,0 +1,123 @@
+{
+  "statistics": {
+    "error": 0,
+    "body": {
+      "todayAmount": 3250,
+      "todayVisitors": 128,
+      "todayOrders": 42,
+      "conversionRate": 32.8,
+      "totalAmount": 125600,
+      "totalConversations": 1542
+    },
+    "message": ""
+  },
+  "conversation_list": {
+    "error": 0,
+    "body": {
+      "conversations": [
+        {
+          "id": "conv_001",
+          "user_name": "张先生",
+          "last_message": "能再便宜点不，1200行不？",
+          "unread_count": 1,
+          "timestamp": "2023-05-21T10:18:00Z"
+        },
+        {
+          "id": "conv_002",
+          "user_name": "李女士",
+          "last_message": "你好，这个笔记本有发票吗？",
+          "unread_count": 0,
+          "timestamp": "2023-05-20T15:40:00Z"
+        },
+        {
+          "id": "conv_003",
+          "user_name": "王先生",
+          "last_message": "这个手机电池健康度多少？",
+          "unread_count": 0,
+          "timestamp": "2023-05-17T09:20:00Z"
+        },
+        {
+          "id": "conv_004",
+          "user_name": "赵女士",
+          "last_message": "请问这个商品还在售吗？",
+          "unread_count": 2,
+          "timestamp": "2023-05-21T09:05:00Z"
+        },
+        {
+          "id": "conv_005",
+          "user_name": "刘先生",
+          "last_message": "我明天可以来取货吗？",
+          "unread_count": 0,
+          "timestamp": "2023-05-19T18:30:00Z"
+        }
+      ],
+      "total": 5,
+      "hasMore": false
+    },
+    "message": ""
+  },
+  "conversation_info": {
+    "error": 0,
+    "body": {
+      "id": "conv_001",
+      "status": "active",
+      "created_at": "2023-05-21T09:15:00Z",
+      "product": {
+        "id": "prod_001",
+        "title": "二手相机 佳能5D Mark IV 成色95新",
+        "price": 1299.00,
+        "image": "https://via.placeholder.com/50",
+        "description": "佳能5D4单反相机，2020年购入，非常爱惜，无磕碰无进水，快门数3000次左右，送存储卡、相机包和原装电池..."
+      }
+    },
+    "message": ""
+  },
+  "conversation_messages": {
+    "error": 0,
+    "body": {
+      "messages": [
+        {
+          "id": "msg_001",
+          "content": "这个相机能便宜点吗？",
+          "is_self": false,
+          "timestamp": "2023-05-21T10:15:00Z"
+        },
+        {
+          "id": "msg_002",
+          "content": "您好！感谢您对我这台佳能5D Mark IV的关注。这台相机的成色非常新，快门次数很少，而且我已经对价格进行了合理定位，相比市场价已经很优惠了。不过我理解您想要更好的价格，您能接受¥1250吗？",
+          "is_self": true,
+          "timestamp": "2023-05-21T10:16:00Z"
+        },
+        {
+          "id": "msg_003",
+          "content": "能再便宜点不，1200行不？",
+          "is_self": false,
+          "timestamp": "2023-05-21T10:18:00Z"
+        }
+      ],
+      "hasMore": false,
+      "total": 3
+    },
+    "message": ""
+  },
+  "send_message": {
+    "error": 0,
+    "body": {
+      "id": "msg_004",
+      "content": "好的，考虑到您的诚意，1200可以成交。您什么时候方便交易呢？",
+      "is_self": true,
+      "timestamp": "2023-05-21T10:25:00Z"
+    },
+    "message": "消息已发送"
+  },
+  "error_response": {
+    "error": 500,
+    "body": {},
+    "message": "服务器内部错误，请稍后重试"
+  },
+  "unauthorized_response": {
+    "error": 401,
+    "body": {},
+    "message": "未授权，请先登录"
+  }
+} 

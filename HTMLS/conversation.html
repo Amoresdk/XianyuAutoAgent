@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闲鱼AutoAgent - 对话管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C5CE7;
+            --primary-light: #A29BFE;
+            --primary-dark: #5341D6;
+            --accent-color: #FD79A8;
+            --text-color: #2D3436;
+            --text-light: #636E72;
+            --bg-color: #F7F9FC;
+            --card-bg: #FFFFFF;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --xianyuBlue: #3AA1F3;
+            --xianyuYellow: #FDCC0D;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: none;
+            padding: 24px;
+            height: 100%;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--text-color);
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+        }
+        
+        .stats-title {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        
+        .stats-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        /* 新增闲鱼聊天界面样式 */
+        .chat-container {
+            display: flex;
+            height: calc(100vh - 250px);
+            min-height: 600px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .chat-sidebar {
+            width: 320px;
+            background-color: #fff;
+            border-right: 1px solid #eaeaea;
+            overflow-y: auto;
+        }
+
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 10;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #f7f7f7;
+        }
+
+        .product-info {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .product-price {
+            color: #ff4757;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .product-meta {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .chat-input {
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #eaeaea;
+        }
+
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input-container input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background-color: #f1f1f1;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+
+        .chat-input-container button {
+            padding: 8px 15px;
+            background-color: var(--xianyuYellow);
+            border: none;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .chat-item:hover {
+            background-color: #f7f7f7;
+        }
+
+        .chat-item.active {
+            background-color: #f0f7ff;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-content {
+            flex: 1;
+        }
+
+        .chat-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-preview {
+            font-size: 13px;
+            color: #777;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .chat-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .message-item {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-content {
+            max-width: 70%;
+        }
+
+        .message-bubble {
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 15px;
+        }
+
+        .message-outgoing .message-bubble {
+            background-color: #FFF4D9;
+            border-top-right-radius: 0;
+        }
+
+        .message-incoming .message-bubble {
+            background-color: #ffffff;
+            border-top-left-radius: 0;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .message-outgoing {
+            flex-direction: row-reverse;
+        }
+
+        .message-outgoing .message-avatar {
+            margin-right: 0;
+            margin-left: 10px;
+        }
+
+        .message-outgoing .message-time {
+            text-align: right;
+        }
+
+        .message-status {
+            margin-top: 2px;
+            font-size: 12px;
+            color: #aaa;
+            text-align: right;
+        }
+
+        .user-tag {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 2px;
+            font-size: 10px;
+            color: #fff;
+            background-color: #FF9500;
+            margin-left: 5px;
+        }
+        
+        .status-pending {
+            background-color: #FF9500;
+        }
+        
+        .status-paid {
+            background-color: #2ECC71;
+        }
+        
+        .status-shipping {
+            background-color: #3498DB;
+        }
+        
+        .status-delivered {
+            background-color: #9B59B6;
+        }
+        
+        .btn-primary {
+            background-color: var(--xianyuYellow);
+            border-color: var(--xianyuYellow);
+            color: #333;
+        }
+        
+        .btn-primary:hover {
+            background-color: #f3c200;
+            border-color: #f3c200;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- 数据统计卡片 -->
+        <h2 class="mb-4">对话管理</h2>
+        
+        <div class="row mb-4">
+            <!-- 数据统计框架 -->
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-chart-line me-2"></i> 数据统计
+                    </div>
+                    <div class="row">
+                        <!-- 今日成交金额 -->
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-icon" style="background-color: #55efc4;">
+                                    <i class="fas fa-yen-sign"></i>
+                                </div>
+                                <div class="stats-title">今日成交金额</div>
+                                <div class="stats-value">¥3,250</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 今日咨询人数 -->
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-icon" style="background-color: #74b9ff;">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div class="stats-title">今日咨询人数</div>
+                                <div class="stats-value">128</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 今日下单人数 -->
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-icon" style="background-color: #a29bfe;">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="stats-title">今日下单人数</div>
+                                <div class="stats-value">42</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 转化率（今日） -->
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-icon" style="background-color: #ff7675;">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div class="stats-title">转化率（今日）</div>
+                                <div class="stats-value">32.8%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 闲鱼聊天界面 -->
+            <div class="col-md-12">
+                <div class="card p-0">
+                    <div class="chat-container">
+                        <!-- 左侧消息列表 -->
+                        <div class="chat-sidebar">
+                            <div class="chat-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="chat-title">消息</div>
+                                    <div>
+                                        <button id="refresh-button" class="btn btn-sm btn-light" title="刷新">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-list">
+                                <!-- 对话项目由JS动态生成 -->
+                                <div class="text-center p-4 text-muted">
+                                    <div class="spinner-border spinner-border-sm" role="status">
+                                        <span class="visually-hidden">加载中...</span>
+                                    </div>
+                                    <p class="mt-2">加载用户列表中...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧聊天窗口 -->
+                        <div class="chat-main">
+                            <!-- 商品信息 -->
+                            <div class="product-info">
+                                <div class="d-flex align-items-center">
+                                    <img src="https://via.placeholder.com/50" class="product-image" alt="商品图片">
+                                    <div>
+                                        <div class="product-name">请选择对话 <small class="user-tag status-pending">未选择</small></div>
+                                        <div class="product-price">¥0.00</div>
+                                        <div class="product-meta">请从左侧列表选择一个对话</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 聊天消息区域 -->
+                            <div class="chat-messages">
+                                <div class="text-center p-4 text-muted">
+                                    <p>选择一个对话开始聊天</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 聊天输入框 -->
+                            <div class="chat-input">
+                                <div class="chat-input-container">
+                                    <input type="text" placeholder="请输入消息，按Enter键发送或按此处点击发送按钮">
+                                    <button class="btn btn-primary">发送</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 加载脚本 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/conversation.js"></script>
+</body>
+</html> 

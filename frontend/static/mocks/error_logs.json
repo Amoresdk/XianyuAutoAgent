@@ -1,0 +1,18 @@
+{
+    "error": 0,
+    "body": {
+        "logs": [
+            "2023-05-23 10:15:32 [ERROR] 请求闲鱼API失败，错误代码: 401",
+            "2023-05-23 10:20:45 [ERROR] 连接超时: https://api.example.com/v1/messages",
+            "2023-05-23 11:05:10 [ERROR] 无法解析JSON响应: SyntaxError: Unexpected token } in JSON at position 432",
+            "2023-05-23 11:30:22 [ERROR] 模型调用失败，状态码: 502，响应内容: 服务暂时不可用",
+            "2023-05-23 12:15:47 [ERROR] 参数验证失败: 'product_id' 字段为必填项",
+            "2023-05-23 13:40:18 [ERROR] 数据库连接失败: (pymysql.err.OperationalError) (2003, \"Can't connect to MySQL server\")",
+            "2023-05-23 14:22:35 [ERROR] 用户认证失败，无效的token",
+            "2023-05-23 15:10:59 [ERROR] 文件不存在: /data/images/product_1234.jpg",
+            "2023-05-23 16:05:27 [ERROR] 内存溢出: JavaScript heap out of memory",
+            "2023-05-23 16:45:33 [ERROR] 未捕获的异常: KeyError: 'user_id' in function process_message at line 142"
+        ]
+    },
+    "message": ""
+} 

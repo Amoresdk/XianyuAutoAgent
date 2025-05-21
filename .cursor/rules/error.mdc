@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Rule Name: error
+Description: 规避常遇到的错误，按照特定的规则debug
+
+## 1.常见错误
+-“&&”不是此版本中的有效语句分隔符
+
+

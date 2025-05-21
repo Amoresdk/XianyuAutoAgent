@@ -1,0 +1,109 @@
+---
+description: 
+globs: *.py
+alwaysApply: false
+---
+Rule Name: api_spec
+Description: 项目API接口规范，统一前后端交互格式、错误码、请求方式、header要求、文档模板等，适用于所有新老接口开发和联调。
+globs: *.py
+---
+# API接口规范（AutoAgent项目专用）
+
+## 1. 入参要求
+- header中必须设置`auth`，值为当前登录后端保存的token
+- 所有请求参数均为JSON格式，即使无参数也需传递`{}`
+- 除非特殊说明，所有接口均使用POST方法
+
+## 2. 返回参数
+- 所有接口统一返回JSON对象，格式如下：
+
+```
+{
+  "error": 0,
+  "body": {},
+  "message": ""
+}
+```
+
+- 字段说明：
+  - error: 0=正常，500=系统异常，401=未登录，其他=业务异常（前端弹message）
+  - body: 业务数据对象
+  - message: 错误或提示信息
+
+## 3. 通用处理建议
+- 前端应统一用一个通用函数处理所有API返回值
+- 所有API文档均采用本规范
+- 接口如有变更需同步更新到 [接口文档.md](mdc:接口文档.md)
+
+## 4. 接口文档模板
+- 接口名称：简要功能描述（≤200字）
+- 接口地址：如`/api/user/login`
+- 方法：POST/GET
+- 需要登录：是/否
+- 请求参数：JSON对象，列出所有字段及说明
+- 响应参数：JSON对象，列出所有字段及说明
+- 响应类型：json/blob等
+- 返回值示例：完整JSON示例
+
+## 5. 示例
+### 用户登录
+- 接口名称：用户登录
+- 接口地址：`/api/user/login`
+- 方法：POST
+- 需要登录：否
+- 请求参数：
+```
+{
+  "username": "string",
+  "password": "string"
+}
+```
+- 响应参数：
+```
+{
+  "error": 0,
+  "body": {
+    "token": "string",
+    "user_id": "string"
+  },
+  "message": ""
+}
+```
+- 响应类型：json
+
+### 获取会话列表
+- 接口名称：获取当前所有会话
+- 接口地址：`/api/conversations`
+- 方法：POST
+- 需要登录：是
+- 请求参数：
+```
+{}
+```
+- 响应参数：
+```
+{
+  "error": 0,
+  "body": {
+    "conversations": [
+      {
+        "id": "string",
+        "user_name": "string",
+        "last_message": "string",
+        "unread_count": 2
+      }
+    ]
+  },
+  "message": ""
+}
+```
+- 响应类型：json
+
+## 6. 特殊说明
+- 下载类接口响应类型为blob，body可为空或返回文件相关信息
+- 所有接口如无特殊说明，均需带上auth header
+- 错误码和message需前后端约定好，便于统一处理
+
+# 本规则适用于所有API开发、联调、测试和文档编写。
+
+

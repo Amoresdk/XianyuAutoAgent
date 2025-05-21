@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闲鱼AutoAgent - 管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C5CE7;
+            --primary-light: #A29BFE;
+            --primary-dark: #5341D6;
+            --accent-color: #FD79A8;
+            --text-color: #2D3436;
+            --text-light: #636E72;
+            --bg-color: #F7F9FC;
+            --card-bg: #FFFFFF;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .sidebar {
+            height: 100vh;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            border-radius: 0 20px 20px 0;
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+            padding: 0;
+            overflow-y: auto;
+        }
+        
+        .logo-container {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            background-color: var(--primary-color);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 12px;
+        }
+        
+        .logo-text h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-color);
+        }
+        
+        .logo-text p {
+            font-size: 12px;
+            margin: 0;
+            color: var(--text-light);
+        }
+        
+        .nav-section {
+            padding: 0 12px;
+            margin-bottom: 16px;
+        }
+        
+        .nav-section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            margin: 16px 12px 8px;
+            font-weight: 600;
+        }
+        
+        .nav-item {
+            margin-bottom: 4px;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            padding: 12px 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(108, 92, 231, 0.08);
+            color: var(--primary-color);
+        }
+        
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.25);
+        }
+        
+        .nav-link i {
+            width: 22px;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .content-area {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+        
+        .search-bar {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px 12px 44px;
+            border-radius: 12px;
+            border: none;
+            background: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            font-size: 15px;
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+        
+        .user-profile {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .top-header {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .top-nav {
+            display: flex;
+            align-items: center;
+        }
+        
+        .top-nav-item {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .top-nav-item:hover, .top-nav-item.active {
+            background-color: rgba(108, 92, 231, 0.08);
+            color: var(--primary-color);
+        }
+        
+        .top-nav-item.active {
+            font-weight: 600;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+        }
+        
+        iframe {
+            width: 100%;
+            height: calc(100vh - 122px);
+            border: none;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- 侧边栏导航 -->
+            <div class="sidebar">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h3>闲鱼AutoAgent</h3>
+                        <p>智能客服管理系统</p>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">主要功能</div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" onclick="changeFrame('conversation.html', this)">
+                                <i class="fas fa-comments"></i> 会话管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="changeFrame('settings.html', this)">
+                                <i class="fas fa-cog"></i> 系统设置
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">系统工具</div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="changeFrame('logs.html', this)">
+                                <i class="fas fa-clipboard-list"></i> 系统日志
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-sign-out-alt"></i> 退出登录
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="content-area">
+                <!-- 顶部导航与用户信息 -->
+                <div class="top-header">
+                    <div class="top-nav" id="subNavContainer">
+                        <!-- 动态生成的二级菜单将显示在这里 -->
+                    </div>
+                    <div class="user-profile">
+                        <span>JD</span>
+                    </div>
+                </div>
+                
+                <div class="header">
+                    <!-- 原搜索框内容已移除 -->
+                </div>
+                
+                <iframe id="contentFrame" src="conversation.html" title="内容区域"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 菜单配置
+        const menuConfig = {
+            'settings.html': {
+                title: '系统设置',
+                subMenu: [
+                    { title: '参数配置', url: 'model_settings.html', icon: 'fas fa-microchip' },
+                    { title: 'Agent配置', url: 'agent_settings.html', icon: 'fas fa-user-tie' },
+                    { title: '敏感词过滤', url: 'filter_settings.html', icon: 'fas fa-filter' }
+                ]
+            },
+            'conversation.html': {
+                title: '会话管理',
+                subMenu: [
+                    { title: '会话列表', url: 'conversation.html', icon: 'fas fa-list' }
+                ]
+            },
+            'logs.html': {
+                title: '系统日志',
+                subMenu: [
+                    { title: '最新日志', url: 'logs.html', icon: 'fas fa-clock' },
+                    { title: '错误日志', url: 'error_logs.html', icon: 'fas fa-exclamation-triangle' }
+                ]
+            }
+        };
+        
+        // 当前一级菜单和二级菜单
+        let currentMainMenu = 'conversation.html';
+        let currentSubMenu = '';
+        
+        function changeFrame(url, navLink) {
+            // 更新内容框架
+            document.getElementById('contentFrame').src = url;
+            
+            // 如果点击的是主菜单
+            if (navLink) {
+                // 更新活动导航项
+                const navLinks = document.querySelectorAll('.nav-link');
+                navLinks.forEach(link => link.classList.remove('active'));
+                navLink.classList.add('active');
+                
+                // 更新当前主菜单
+                for (const key in menuConfig) {
+                    if (url === key) {
+                        currentMainMenu = key;
+                        break;
+                    }
+                }
+                
+                // 如果点击的是系统设置，默认打开模型配置页面
+                if (url === 'settings.html') {
+                    document.getElementById('contentFrame').src = 'model_settings.html';
+                }
+                
+                // 更新二级菜单
+                updateSubNav();
+            } else {
+                // 如果是点击二级菜单，更新二级菜单活动状态
+                updateSubNavActiveState(url);
+            }
+        }
+        
+        function updateSubNav() {
+            const subNavContainer = document.getElementById('subNavContainer');
+            subNavContainer.innerHTML = '';
+            
+            if (menuConfig[currentMainMenu] && menuConfig[currentMainMenu].subMenu) {
+                const subMenuItems = menuConfig[currentMainMenu].subMenu;
+                
+                subMenuItems.forEach(item => {
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.className = 'top-nav-item';
+                    if (item.url === document.getElementById('contentFrame').src.split('/').pop()) {
+                        link.classList.add('active');
+                        currentSubMenu = item.url;
+                    }
+                    link.innerHTML = `<i class="${item.icon} me-2"></i>${item.title}`;
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        changeFrame(item.url);
+                    };
+                    subNavContainer.appendChild(link);
+                });
+            }
+        }
+        
+        function updateSubNavActiveState(url) {
+            const subNavItems = document.querySelectorAll('.top-nav-item');
+            subNavItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent.includes(getMenuTitleByUrl(url))) {
+                    item.classList.add('active');
+                }
+            });
+            currentSubMenu = url;
+        }
+        
+        function getMenuTitleByUrl(url) {
+            for (const key in menuConfig) {
+                const subMenu = menuConfig[key].subMenu;
+                for (const item of subMenu) {
+                    if (item.url === url) {
+                        return item.title;
+                    }
+                }
+            }
+            return '';
+        }
+        
+        // 初始化二级菜单
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSubNav();
+            
+            // 监听iframe加载完成事件，更新二级菜单活动状态
+            document.getElementById('contentFrame').onload = function() {
+                const url = this.contentWindow.location.pathname.split('/').pop();
+                updateSubNavActiveState(url);
+            };
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

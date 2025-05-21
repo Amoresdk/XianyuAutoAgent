@@ -1,0 +1,278 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# architecture
+# 描述: 本规则文件旨在指导AI更好地协助“闲鱼自动代理”项目的开发。
+#      项目后端采用FastAPI构建的模块化单体架构，前端则基于页面进行模块化。
+
+general:
+  # 编码风格与约定 (可选，根据团队规范填写)
+  # coding_style:
+    # python_version: "3.9" # 例如，项目使用的具体Python版本
+    # line_length: 88 # 例如，如果使用 Black 格式化工具，其默认行长
+    # use_black_formatter: true # 是否使用 Black 进行代码格式化
+    # use_isort: true # 是否使用 isort 进行 import 排序
+    # prefer_type_hints: true # 是否推荐使用类型提示
+
+  # 通用开发实践 (可选)
+  # development_practices:
+    # prefer_small_commits: true # 鼓励小而原子化的代码提交
+    # write_commit_messages_in_language: "中文" # 提交信息语言，或 "英文"
+    # commit_message_format: "类型(范围): 描述 (例如: feat(api): 新增用户注册接口)" # 如果遵循特定提交规范
+
+  # AI交互偏好
+  ai_interaction:
+    preferred_language: "简体中文" # AI回复和交流时优先使用的语言
+    # explain_code_verbosely: false # 如果希望AI的解释更简洁，设置为false
+    # ask_clarifying_questions: true # 鼓励AI在不确定时主动提问以澄清需求
+    modular_development_workflow:
+      enforce: true # 强制执行模块化开发流程
+      description: >
+        在AI协助进行开发工作时，特别是涉及新功能开发或重要代码修改的场景：
+        1. AI应专注于处理当前指定的单个逻辑模块（无论是前端的一个页面模块，还是后端的一个功能性Python模块）。
+        2. AI应尽力避免引入会直接影响其他已存在且不相关模块的修改。若跨模块的改动确实无法避免，则需明确指出这些改动点，并解释其必要性。
+        3. 在完成对一个模块的开发或修改任务后，AI应主动提出建议或协助编写针对该模块的pytest测试用例（单元测试或集成测试）。
+        4. 在开始处理新的模块之前，鼓励AI与用户一同确认当前模块的功能实现和测试覆盖情况。
+
+project_specific:
+  project_name: "XianyuAutoAgent" # 项目名称
+  project_root_directory_name: "XianyuAutoAgent" # 项目根目录的名称
+
+  architecture:
+    type: "后端模块化单体 与 前端基于页面的模块化"
+    description: >
+      后端采用FastAPI框架构建一个单一的应用程序，但其内部代码会按照不同的职责（例如：对话逻辑处理、系统配置管理、与闲鱼服务器的WebSocket通信等）组织成独立的Python模块。
+      前端则以每个HTML页面为一个独立的模块进行构建，每个页面模块可能包含其专属的JavaScript文件来处理特定的交互逻辑。
+
+  # --- 项目目录结构 ---
+  directory_structure:
+    description: "项目的推荐目录结构如下，AI在进行文件操作或代码生成时应参考此结构。"
+    layout: |
+      XianyuAutoAgent/
+      ├── .env                  # 环境变量 (本地，不提交到git)
+      ├── .env.example          # 环境变量示例文件
+      ├── .gitignore
+      ├── cursor.rules          # 本规则文件
+      ├── LICENSE
+      ├── README.md
+      ├── requirements.txt      # Python 依赖
+
+      ├── backend/              # 所有后端代码
+      │   ├── app/              # FastAPI 应用核心代码
+      │   │   ├── __init__.py
+      │   │   ├── main.py         # FastAPI 应用实例创建和全局配置 (如Sentry初始化)
+      │   │   │
+      │   │   ├── api/            # API路由和端点处理
+      │   │   │   ├── __init__.py
+      │   │   │   ├── endpoints/
+      │   │   │   │   ├── __init__.py
+      │   │   │   │   ├── conversations.py  # 对话相关API
+      │   │   │   │   ├── settings.py       # 配置相关API
+      │   │   │   │   └── system.py         # 系统状态与控制API
+      │   │   │   └── deps.py     # (可选) FastAPI 依赖项
+      │   │   │
+      │   │   ├── core/           # 核心配置、Pydantic模型、常量、共享工具
+      │   │   │   ├── __init__.py
+      │   │   │   ├── config.py     # Pydantic Settings (读取.env)
+      │   │   │   ├── models.py     # API请求/响应模型, 数据库模型(如果使用ORM)
+      │   │   │   └── security.py   # (可选) 安全相关，如密码哈希、JWT令牌处理
+      │   │   │
+      │   │   ├── db/             # 数据库交互逻辑
+      │   │   │   ├── __init__.py
+      │   │   │   └── session.py    # SQLite连接、CRUD操作函数封装
+      │   │   │
+      │   │   ├── services/       # 业务逻辑层 (Use Cases / Business Logic)
+      │   │   │   ├── __init__.py
+      │   │   │   ├── conversation_service.py # 对话业务逻辑
+      │   │   │   └── llm_service.py          # LLM调用与处理相关业务逻辑
+      │   │   │
+      │   │   ├── agent/          # 闲鱼回复机器人(XianyuReplyBot)及相关AI逻辑
+      │   │   │   ├── __init__.py
+      │   │   │   └── reply_bot.py  # (原 XianyuAgent.py 的核心逻辑)
+      │   │   │   └── prompts/      # LLM 使用的提示词文本文件 (除非通过API动态管理)
+      │   │   │
+      │   │   └── xianyu_adapter/ # 与闲鱼服务器交互的适配器层
+      │   │       ├── __init__.py
+      │   │       ├── ws_client.py  # 闲鱼WebSocket客户端逻辑 (原 main.py 中 XianyuLive 的核心)
+      │   │       └── http_client.py# 闲鱼HTTP API客户端逻辑 (原 XianyuApis.py 的核心)
+      │   │
+      │   ├── data/             # 存放SQLite数据库文件等持久化数据
+      │   │   └── xianyu_agent.db
+      │   └── Dockerfile        # (可选) 用于构建后端服务Docker镜像的文件
+      │
+      ├── frontend/             # 所有前端代码
+      │   ├── index.html          # 主应用外壳页面 (如果采用iframe导航方案)
+      │   ├── pages/              # 各个独立的页面模块 (HTML文件)
+      │   │   ├── conversation.html
+      │   │   ├── model_settings.html
+      │   │   ├── agent_settings.html
+      │   │   ├── filter_settings.html
+      │   │   ├── logs.html
+      │   │   └── error_logs.html
+      │   ├── static/             # 静态资源
+      │   │   ├── css/            # CSS样式文件
+      │   │   │   ├── style.css   # 全局或通用样式
+      │   │   │   └── conversation.css # 针对特定页面的样式 (例如)
+      │   │   ├── js/             # JavaScript脚本文件
+      │   │   │   ├── main.js     # index.html 的主JavaScript (例如iframe切换逻辑)
+      │   │   │   └── conversation.js # 针对特定页面的JavaScript (例如)
+      │   │   ├── images/         # 图片资源
+      │   │   └── mocks/            # (可选) 用于存放API的mock数据文件
+      │   └── Dockerfile          # (可选) 用于构建前端静态资源服务镜像 (例如使用Nginx)
+      │
+      ├── logs/                 # 应用运行时产生的日志文件
+      │   └── app_{time:YYYY-MM-DD}.log
+      │
+      ├── scripts/              # (可选) 存放一些实用脚本 (例如：启动开发服务器、数据迁移等)
+      │   └── run_dev_server.sh # 示例：启动开发服务器的脚本
+      │
+      └── tests/                # 所有测试代码
+          ├── __init__.py
+          ├── backend/            # 后端测试
+          │   ├── __init__.py
+          │   ├── conftest.py     # Pytest 共享的fixtures和配置
+          │   ├── test_api/       # API层测试
+          │   │   ├── __init__.py
+          │   │   └── test_conversations.py # 对话API的测试示例
+          │   └── test_services/  # 服务层测试
+          │       ├── __init__.py
+          │       └── test_conversation_service.py # 对话服务逻辑的测试示例
+          └── frontend/           # (可选) 前端测试 (例如JavaScript单元测试或E2E测试)
+              └── ...
+
+  # --- 前端技术栈与约定 ---
+  frontend:
+    base_directory: "frontend/" # 前端代码根目录
+    technology_stack:
+      - name: "HTML5"
+        notes: "用于构建页面的基本结构。"
+      - name: "CSS3"
+        notes: "用于定义页面的样式和布局。"
+      - name: "JavaScript (ES6+)"
+        notes: "用于实现客户端的交互逻辑、DOM操作以及与后端API的通信（初期使用mock数据，后续替换为真实的API调用）。"
+
+    module_organization:
+      type: "基于页面的模块化"
+      base_html_path: "pages/" # HTML页面模块相对于 frontend/ 的路径, 例如: frontend/pages/conversation.html
+      base_js_path: "static/js/" # JS文件相对于 frontend/ 的路径, 例如: frontend/static/js/conversation.js
+      base_css_path: "static/css/" # CSS文件相对于 frontend/ 的路径, 例如: frontend/static/css/conversation.css
+      description: >
+        应用中的每一个逻辑“页面”都被视为一个独立的前端模块。
+        其HTML文件存放在 'frontend/pages/' 目录下。
+        相关的JavaScript逻辑则位于 'frontend/static/js/' 目录，CSS样式位于 'frontend/static/css/' 目录。
+        理想情况下，JS和CSS文件名应与其对应的HTML页面名保持关联（例如，'conversation.js' 对应 'conversation.html'）。
+        作为应用外壳的 'index.html'（如果存在并承担导航功能）可以放置在 'frontend/' 根目录下。
+
+    api_interaction:
+      initial_phase: "Mocking (模拟数据阶段)"
+      description: "前端开发初期，将使用预设的模拟数据或模拟API响应来进行功能开发和测试，以便与后端开发并行。后续，这些模拟实现将被替换为对FastAPI后端服务的真实API调用。"
+      # mock_data_location: "frontend/static/mocks/" # 如果有统一存放mock数据文件的目录
+
+  # --- 后端技术栈与约定 ---
+  backend:
+    base_directory: "backend/" # 后端代码根目录
+    language:
+      name: "Python"
+      # version: "3.9+" # 如需指定Python版本
+
+    framework:
+      name: "FastAPI"
+      # version: "若有特定版本要求可在此注明"
+      notes: "作为主要的Web框架，用于构建RESTful API接口以及处理WebSocket实时通信。"
+
+    module_organization:
+      type: "模块化单体应用"
+      description: >
+        整个FastAPI应用程序的代码位于 'backend/' 目录下，并进一步划分为逻辑清晰的Python子模块（即带有 '__init__.py' 文件的目录）。
+        每个子模块负责处理一个明确定义的领域或功能。
+        AI在协助开发或修改时，应一次聚焦于一个这样的子模块，并在完成后协助为此模块编写pytest测试。
+      # 后端子模块示例 (参照上述 'directory_structure.layout' 中的 'backend/app/' 内部结构):
+      # - 'xianyu_adapter': 负责与闲鱼服务器的WebSocket和HTTP通信。
+      # - 'agent': 包含闲鱼回复机器人(XianyuReplyBot)的核心逻辑和与大语言模型的交互。
+      # - 'api': 定义FastAPI的路由和API端点处理器。
+      # - 'core': 存放核心的Pydantic数据模型、应用配置加载逻辑以及共享的工具函数。
+      # - 'services': 实现具体的业务逻辑，作为API层和数据/适配器层之间的桥梁。
+      # - 'db': 封装与SQLite数据库的交互操作。
+
+    realtime_communication:
+      technology: "WebSocket"
+      implementation: "利用FastAPI内置的WebSocket支持来服务前端管理界面，并使用 'websockets' 库来实现与闲鱼服务器的客户端WebSocket连接。"
+      notes: "WebSocket用于实现前端与后端之间的实时数据更新，以及后端与闲鱼服务器之间的实时消息交换。"
+
+    database:
+      type: "SQLite"
+      # version: "通常随Python发行版提供"
+      file_location: "backend/data/xianyu_agent.db" # SQLite数据库文件的建议存放路径
+      access_method: "初期可直接使用Python内置的 `sqlite3` 模块进行操作，后续若有需要可考虑引入SQLAlchemy等ORM或查询构造器。"
+      notes: >
+        选择SQLite是基于其简单易用的特性。数据模型应有清晰定义。
+        若未来系统需求增长，需考虑向其他数据库迁移的路径。
+
+    data_exchange_format:
+      format: "JSON"
+      notes: "作为RESTful API和适用场景下WebSocket消息的标准数据交换格式。"
+
+    api_style:
+      type: "RESTful"
+      notes: "所有HTTP API应遵循REST设计原则。使用FastAPI来实现这些API。"
+
+    configuration_management:
+      method: ".env 文件" # 在项目根目录使用.env文件
+      library: "python-dotenv (用于加载.env文件), FastAPI的Pydantic Settings (用于类型安全的配置读取)"
+      notes: "敏感配置信息（如API密钥）和特定于环境的设置应存储在.env文件中，并通过.env.example提供模板。"
+
+    testing:
+      framework: "pytest"
+      # version: "若有特定版本要求可在此注明"
+      test_file_location_and_pattern: "tests/backend/test_*.py" # 后端测试文件的建议存放路径和命名约定
+      scope:
+        - "单元测试：针对单个函数和类的独立测试。"
+        - "集成测试：针对FastAPI端点的测试（使用TestClient），以及模块间的交互测试。"
+      notes: "在后端模块开发或修改完成后，应为其编写相应的测试用例。"
+
+  # --- 日志与错误追踪 ---
+  logging_and_tracing:
+    local_logging:
+      library: "Loguru"
+      log_file_location: "logs/app_{time:YYYY-MM-DD}.log" # 应用日志文件的统一存放路径和命名格式
+      # configuration_notes: "应配置Loguru的sink，以便同时向控制台和文件输出日志，并设定合适的日志级别、轮转策略等。"
+    error_tracking:
+      service: "Sentry (推荐用于未来生产环境)"
+      sdk: "sentry-sdk[fastapi,loguru]" # Sentry SDK及其FastAPI、Loguru集成
+      initial_setup: "Sentry DSN应通过项目根目录的.env文件进行管理。在后端应用的主入口点 (backend/app/main.py) 初始化Sentry SDK。"
+      notes: "Loguru用于本地开发和生产环境的详细日志记录；Sentry用于生产环境中错误的实时聚合、告警和分析。"
+
+  # --- 版本控制 ---
+  # version_control:
+    # system: "Git"
+    # hosting_platform: "例如：GitHub, GitLab, Gitee 等代码托管平台" # 如果项目托管在特定平台
+
+  # --- 项目根目录下的重要文件与目录 (用于快速参考) ---
+  key_files_and_directories_at_root:
+    - path: ".env"
+      description: "环境变量配置文件 (包含敏感信息，不应提交到版本控制)。"
+    - path: ".env.example"
+      description: ".env文件的模板，列出必要的环境变量及其示例值。"
+    - path: "requirements.txt"
+      description: "Python项目依赖库列表。"
+    - path: "cursor.rules"
+      description: "本规则文件，指导AI与开发者协作。"
+    - path: "README.md"
+      description: "项目说明文档，包含项目介绍、如何安装、运行、部署等信息。"
+    - path: "LICENSE"
+      description: "项目的开源许可证文件。"
+    - path: ".gitignore"
+      description: "指定Git版本控制系统应忽略的文件和目录。"
+    - path: "scripts/"
+      description: "(可选目录) 存放一些辅助性的脚本，如开发服务器启动脚本、数据迁移脚本等。"
+    - path: "logs/"
+      description: "存放应用运行时产生的日志文件的目录。"
+    - path: "tests/"
+      description: "存放所有自动化测试代码的根目录。"
+    - path: "backend/"
+      description: "包含所有后端Python和FastAPI相关代码的目录。"
+    - path: "frontend/"
+
+      description: "包含所有前端HTML, CSS, JavaScript相关代码的目录。"

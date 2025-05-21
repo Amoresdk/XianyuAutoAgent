@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闲鱼AutoAgent - 参数配置</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C5CE7;
+            --primary-light: #A29BFE;
+            --primary-dark: #5341D6;
+            --accent-color: #FD79A8;
+            --text-color: #2D3436;
+            --text-light: #636E72;
+            --bg-color: #F7F9FC;
+            --card-bg: #FFFFFF;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --success-color: #00B894;
+            --warning-color: #FDCB6E;
+            --danger-color: #FF7675;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 24px;
+        }
+        
+        .page-header {
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-title i {
+            margin-right: 12px;
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+        
+        .breadcrumb {
+            display: none; /* 隐藏面包屑，使用首页的顶部导航代替 */
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 20px 24px;
+        }
+        
+        .card-header h5 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header h5 i {
+            color: var(--primary-color);
+            margin-right: 12px;
+            font-size: 20px;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .form-label {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: var(--text-color);
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 15px;
+            box-shadow: none;
+            background-color: var(--bg-color);
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+        }
+        
+        .btn {
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.25);
+        }
+        
+        .btn-outline-secondary {
+            color: var(--text-light);
+            border-color: rgba(0,0,0,0.1);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .form-text {
+            color: var(--text-light);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+        
+        .input-group-text {
+            background-color: var(--bg-color);
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+        
+        .alert-info {
+            background-color: rgba(108, 92, 231, 0.1);
+            color: var(--primary-dark);
+        }
+        
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 32px;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Custom styles for model selection cards */
+        .model-card {
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            margin-bottom: 16px;
+            background-color: var(--bg-color);
+            transition: all 0.2s;
+        }
+        
+        .model-card:hover {
+            background-color: rgba(108, 92, 231, 0.05);
+        }
+        
+        .model-card.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(108, 92, 231, 0.08);
+        }
+        
+        .model-card-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+        
+        .model-card-description {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 0;
+        }
+        
+        .model-card-icon {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-right: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-microchip"></i>参数配置
+        </h1>
+        <p class="text-muted mt-2">配置AI对话模型、密钥和接口信息</p>
+    </div>
+
+    <form id="modelSettingsForm">
+        <!-- 模型选择卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-brain"></i>选择AI模型</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="model-card selected" data-model="qwen" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="model-card-title">通义千问</div>
+                            </div>
+                            <p class="model-card-description">阿里云自研大语言模型，具有较强的中文理解能力和对话能力</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-card" data-model="gpt-4" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="model-card-title">GPT-4</div>
+                            </div>
+                            <p class="model-card-description">OpenAI的GPT-4是目前最先进的大语言模型之一，具有强大的推理和创作能力</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-card" data-model="gpt-3.5" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div class="model-card-title">GPT-3.5</div>
+                            </div>
+                            <p class="model-card-description">GPT-3.5提供良好的性能与速度平衡，适合一般对话和客服场景</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-card" data-model="wenxin" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-message"></i>
+                                </div>
+                                <div class="model-card-title">文心一言</div>
+                            </div>
+                            <p class="model-card-description">百度文心一言是国内领先的大语言模型，拥有丰富的中文知识和对话能力</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="model-card" data-model="custom" onclick="selectModel(this)">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="model-card-icon">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="model-card-title">自定义模型</div>
+                            </div>
+                            <p class="model-card-description">配置自定义模型接口和参数，适用于私有部署或其他第三方模型</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API密钥配置 -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-key"></i>模型秘钥</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="apiKey" class="form-label">API密钥</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="apiKey" placeholder="输入API密钥" 
+                               onchange="saveSettings()" onblur="saveApiKey()">
+                        <button class="btn btn-outline-secondary" type="button" onclick="toggleApiKeyVisibility()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="form-text">请从AI服务提供商获取API密钥</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 模型接口配置 -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-plug"></i>模型接口配置</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="apiEndpoint" class="form-label">接口地址</label>
+                    <input type="text" class="form-control" id="apiEndpoint" 
+                           placeholder="https://api.example.com/v1" 
+                           value="https://dashscope.aliyuncs.com/api/v1"
+                           onchange="saveSettings()" onblur="saveEndpoint()">
+                </div>
+                <div class="mb-3" id="modelNameGroup">
+                    <label for="modelName" class="form-label">模型名称</label>
+                    <input type="text" class="form-control" id="modelName" 
+                           placeholder="模型名称" value="qwen-max"
+                           onchange="saveSettings()" onblur="saveModelName()">
+                </div>
+            </div>
+        </div>
+
+        <!-- 闲鱼Cookies配置 -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cookie-bite"></i>闲鱼平台Cookies</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="cookies" class="form-label">Cookies字符串</label>
+                    <textarea class="form-control" id="cookies" 
+                              placeholder="在此粘贴从浏览器获取的Cookies字符串..."
+                              onchange="saveSettings()" onblur="saveCookies()"></textarea>
+                    <div class="form-text">从闲鱼网页版获取Cookies</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部按钮 -->
+        <div class="footer-buttons">
+            <button type="button" class="btn btn-primary" onclick="saveAllSettings()">
+                <i class="fas fa-save me-1"></i> 保存所有设置
+            </button>
+            <button type="button" class="btn btn-outline-secondary ms-2" onclick="resetToDefaults()">
+                <i class="fas fa-undo me-1"></i> 恢复默认配置
+            </button>
+        </div>
+    </form>
+
+    <script>
+        // 模型配置信息
+        const modelConfigs = {
+            'qwen': {
+                name: '通义千问',
+                endpoint: 'https://dashscope.aliyuncs.com/api/v1',
+                modelName: 'qwen-max',
+                description: '通义千问是阿里云自研大语言模型，具有较强的中文理解能力和对话能力。'
+            },
+            'gpt-4': {
+                name: 'GPT-4',
+                endpoint: 'https://api.openai.com/v1',
+                modelName: 'gpt-4-turbo',
+                description: 'OpenAI的GPT-4是目前最先进的大语言模型之一，具有强大的推理和创作能力。'
+            },
+            'gpt-3.5': {
+                name: 'GPT-3.5',
+                endpoint: 'https://api.openai.com/v1',
+                modelName: 'gpt-3.5-turbo',
+                description: 'GPT-3.5提供良好的性能与速度平衡，适合一般对话和客服场景。'
+            },
+            'wenxin': {
+                name: '文心一言',
+                endpoint: 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop',
+                modelName: 'ernie-4.0',
+                description: '百度文心一言是国内领先的大语言模型，拥有丰富的中文知识和对话能力。'
+            },
+            'custom': {
+                name: '自定义模型',
+                endpoint: '',
+                modelName: '',
+                description: '配置自定义模型接口和参数，适用于私有部署或其他第三方模型。'
+            }
+        };
+
+        // 当前配置
+        let currentConfig = {
+            model: 'qwen',
+            apiKey: '',
+            endpoint: modelConfigs['qwen'].endpoint,
+            modelName: modelConfigs['qwen'].modelName,
+            cookies: ''
+        };
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('http://127.0.0.1:5001/api/config')
+                .then(res => res.json())
+                .then(res => {
+                    if (res.code === 0 && res.data) {
+                        currentConfig = { ...currentConfig, ...res.data };
+                        updateUIFromConfig();
+                    } else {
+                        loadSettingsFromLocal();
+                        updateUIFromConfig();
+                    }
+                })
+                .catch(() => {
+                    loadSettingsFromLocal();
+                    updateUIFromConfig();
+                });
+        });
+
+        // 选择模型
+        function selectModel(element) {
+            document.querySelectorAll('.model-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            const selectedModel = element.getAttribute('data-model');
+            currentConfig.model = selectedModel;
+            if (selectedModel === 'custom') {
+                document.getElementById('apiEndpoint').value = '';
+                document.getElementById('apiEndpoint').placeholder = '请输入接口地址';
+                document.getElementById('modelName').value = '';
+                document.getElementById('modelName').placeholder = '请输入模型名称';
+            } else {
+                document.getElementById('apiEndpoint').value = modelConfigs[selectedModel].endpoint;
+                document.getElementById('modelName').value = modelConfigs[selectedModel].modelName;
+            }
+            saveSettings();
+        }
+
+        // 切换API密钥可见性
+        function toggleApiKeyVisibility() {
+            const apiKeyInput = document.getElementById('apiKey');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                apiKeyInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // 保存所有设置
+        function saveAllSettings() {
+            currentConfig.apiKey = document.getElementById('apiKey').value;
+            currentConfig.endpoint = document.getElementById('apiEndpoint').value;
+            currentConfig.modelName = document.getElementById('modelName').value;
+            currentConfig.cookies = document.getElementById('cookies').value;
+            
+            // 保存到服务器
+            saveSettings();
+            
+            alert('所有设置已保存');
+        }
+
+        // 失焦时保存API密钥
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (apiKey !== currentConfig.apiKey) {
+                console.log("API密钥已变更，正在保存...");
+                currentConfig.apiKey = apiKey;
+                saveSettings();
+            }
+        }
+
+        // 失焦时保存Cookies
+        function saveCookies() {
+            const cookies = document.getElementById('cookies').value.trim();
+            if (cookies !== currentConfig.cookies) {
+                console.log("Cookies已变更，正在保存...");
+                currentConfig.cookies = cookies;
+                saveSettings();
+            }
+        }
+
+        // 失焦时保存接口地址
+        function saveEndpoint() {
+            const endpoint = document.getElementById('apiEndpoint').value.trim();
+            if (endpoint !== currentConfig.endpoint) {
+                console.log("接口地址已变更，正在保存...");
+                currentConfig.endpoint = endpoint;
+                saveSettings();
+            }
+        }
+
+        // 失焦时保存模型名称
+        function saveModelName() {
+            const modelName = document.getElementById('modelName').value.trim();
+            if (modelName !== currentConfig.modelName) {
+                console.log("模型名称已变更，正在保存...");
+                currentConfig.modelName = modelName;
+                saveSettings();
+            }
+        }
+
+        // 保存设置到API
+        function saveSettings() {
+            const configToSave = {
+                ...currentConfig,
+                apiKey: document.getElementById('apiKey').value,
+                endpoint: document.getElementById('apiEndpoint').value,
+                modelName: document.getElementById('modelName').value,
+                cookies: document.getElementById('cookies').value
+            };
+            
+            console.log("正在保存配置到服务器:", configToSave);
+            
+            fetch('http://127.0.0.1:5001/api/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(configToSave)
+            })
+            .then(res => {
+                console.log("服务器响应状态:", res.status);
+                return res.json();
+            })
+            .then(res => {
+                console.log("服务器响应数据:", res);
+                if (res.code === 0) {
+                    console.log('配置已成功保存到服务器');
+                    currentConfig = configToSave;
+                    saveSettingsToLocal();
+                } else {
+                    console.error('保存配置失败:', res.msg);
+                    alert('保存配置失败: ' + res.msg);
+                }
+            })
+            .catch(error => {
+                console.error('保存配置请求异常:', error);
+                alert('无法连接到服务器，请确保API服务已启动');
+            });
+        }
+
+        // 本地localStorage保存
+        function saveSettingsToLocal() {
+            localStorage.setItem('modelConfig', JSON.stringify(currentConfig));
+            console.log('配置已保存到本地localStorage');
+        }
+        
+        // 本地localStorage加载
+        function loadSettingsFromLocal() {
+            const savedConfig = localStorage.getItem('modelConfig');
+            if (savedConfig) {
+                try {
+                    currentConfig = { ...currentConfig, ...JSON.parse(savedConfig) };
+                } catch (e) {
+                    console.error('加载本地配置失败:', e);
+                }
+            }
+        }
+
+        // 更新UI以反映当前配置
+        function updateUIFromConfig() {
+            document.querySelectorAll('.model-card').forEach(card => {
+                card.classList.remove('selected');
+                if (card.getAttribute('data-model') === currentConfig.model) {
+                    card.classList.add('selected');
+                }
+            });
+            document.getElementById('apiKey').value = currentConfig.apiKey;
+            document.getElementById('apiEndpoint').value = currentConfig.endpoint;
+            document.getElementById('modelName').value = currentConfig.modelName;
+            document.getElementById('cookies').value = currentConfig.cookies;
+        }
+
+        // 重置为默认配置
+        function resetToDefaults() {
+            if (confirm('确定要恢复默认配置吗？当前的所有设置将被覆盖。')) {
+                // 默认选择通义千问
+                currentConfig = {
+                    model: 'qwen',
+                    apiKey: '',
+                    endpoint: modelConfigs['qwen'].endpoint,
+                    modelName: modelConfigs['qwen'].modelName,
+                    cookies: ''
+                };
+                // 更新UI
+                updateUIFromConfig();
+                // 保存设置
+                saveSettings();
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
